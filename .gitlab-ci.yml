@@ -4,5 +4,6 @@ stages:
 build:
   stage: build
   script:
+    - whoami
     - go mod tidy
     - go build -o master-api ./genops-master
