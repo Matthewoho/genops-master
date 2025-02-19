@@ -384,27 +384,31 @@ type UpdateUserStatusRespData struct {
 }
 
 type User struct {
-	ID         int    `json:"id"`         // 用户ID
-	Username   string `json:"username"`   // 用户名
-	Realname   string `json:"realname"`   // 真实姓名
-	Email      string `json:"email"`      // 邮箱
-	Phone      string `json:"phone"`      // 电话
-	RoleCode   string `json:"role_code"`  // 角色编码
-	RoleName   string `json:"role_name"`  // 角色名称
-	Status     int8   `json:"status"`     // 状态
-	DelFlag    int8   `json:"del_flag"`   // 删除标志
-	Remark     string `json:"remark"`     // 备注
-	CreateBy   string `json:"create_by"`  // 创建人
-	CreateAt   string `json:"create_at"`  // 创建时间
-	UpdateBy   string `json:"update_by"`  // 更新人
-	UpdateAt   string `json:"update_at"`  // 更新时间
-	ClientIP   string `json:"client_ip"`  // 客户端IP
-	FailedCnt  int64  `json:"failed_cnt"` // 登录失败次数
-	Nickname   string `json:"nickname"`   // 昵称
-	Department string `json:"department"` // 部门
-	EnName     string `json:"en_name"`    // 英文名
-	Avatar     string `json:"avatar"`     // 头像
-	IsAdmin    bool   `json:"is_admin"`   // 是否为管理员
+	ID                   int64  `json:"id"`                      // 用户ID
+	Username             string `json:"username"`                // 用户名
+	Realname             string `json:"realname"`                // 真实姓名
+	Email                string `json:"email"`                   // 邮箱
+	Phone                string `json:"phone"`                   // 电话
+	RoleCode             string `json:"role_code"`               // 角色编码
+	RoleName             string `json:"role_name"`               // 角色名称
+	Status               int8   `json:"status"`                  // 状态
+	DelFlag              int8   `json:"del_flag"`                // 删除标志
+	Remark               string `json:"remark"`                  // 备注
+	CreateBy             string `json:"create_by"`               // 创建人
+	CreateAt             int64  `json:"create_at"`               // 创建时间 (Unix 时间戳)
+	UpdateBy             string `json:"update_by"`               // 更新人
+	UpdateAt             int64  `json:"update_at"`               // 更新时间 (Unix 时间戳)
+	ClientIP             string `json:"client_ip"`               // 客户端IP
+	FailedCnt            int64  `json:"failed_cnt"`              // 登录失败次数
+	Nickname             string `json:"nickname"`                // 昵称
+	Department           string `json:"department"`              // 部门
+	EnName               string `json:"en_name"`                 // 英文名
+	Avatar               string `json:"avatar"`                  // 头像
+	IsAdmin              bool   `json:"is_admin"`                // 是否为管理员
+	LastLoginAt          int64  `json:"last_login_at"`           // 最后登录时间 (Unix 时间戳)
+	CreatedIP            string `json:"created_ip"`              // 创建时IP
+	LastPasswordChangeAt int64  `json:"last_password_change_at"` // 最后修改密码时间 (Unix 时间戳)
+	TwoFactorEnabled     bool   `json:"two_factor_enabled"`      // 是否启用双重认证
 }
 
 type UserInfo struct {

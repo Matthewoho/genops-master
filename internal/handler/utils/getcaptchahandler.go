@@ -22,7 +22,7 @@ func GetCaptchaHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := utils.NewGetCaptchaLogic(r.Context(), svcCtx)
 		resp, err := l.GetCaptcha(svcCtx, &req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(r.Context(), w, biz.GenerateCaptchaError)
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, biz.Success(resp))
 		}

@@ -25,7 +25,7 @@ func NewGetCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCap
 	}
 }
 
-func (l *GetCaptchaLogic) GetCaptcha(ctx *svc.ServiceContext, req *types.GetCaptchaReq) (resp *types.Result, err error) {
+func (l *GetCaptchaLogic) GetCaptcha(ctx *svc.ServiceContext, req *types.GetCaptchaReq) (resp interface{}, err error) {
 	// todo: add your logic here and delete this line
 
 	// 1. 生成验证码
@@ -35,11 +35,7 @@ func (l *GetCaptchaLogic) GetCaptcha(ctx *svc.ServiceContext, req *types.GetCapt
 	}
 
 	// 2. 返回验证码
-	resp = &types.Result{
-		Code:    200,
-		Message: "success",
-		Data:    captcha,
-	}
+	resp = captcha
 
 	return resp, nil
 }
