@@ -1,0 +1,8 @@
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - go mod tidy
+    - go build -o master-api ./genops-master
