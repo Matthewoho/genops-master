@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - whoami
+    - pwd
+    - go mod tidy
+    - go build -o /var/api/genops-master/master-api genops-master
+    - cp -r ./etc /var/api/genops-master/etc
+    - scp -r /var/api/genops-master root@192.168.110.46:/var/api/genops-master
