@@ -7,4 +7,5 @@ build:
     - whoami
     - pwd
     - go mod tidy
-    - go build -o /var/api/master-api genops-master
+    - go build -o /var/api/genops-master/master-api genops-master
+    - cp ./etc /var/api/genops-master/etc
