@@ -6,9 +6,9 @@ type Permission  {
     ID          int64  `json:"id"`          // 权限ID
     Name        string `json:"name"`        // 权限名称
     Description string `json:"description"` // 权限描述
-    CreatedAt   string `json:"created_at"`  // 创建时间
+    CreatedAt   int64 `json:"created_at"`  // 创建时间
     CreateBy    string `json:"create_by"`    // 角色创建人
-    UpdatedAt   string `json:"updated_at"`  // 更新时间
+    UpdatedAt   int64 `json:"updated_at"`  // 更新时间
     UpdateBy    string `json:"update_by"`    // 角色更新人
 }
 

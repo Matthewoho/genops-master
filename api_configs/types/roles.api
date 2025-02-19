@@ -10,9 +10,9 @@ type Role {
 	Status      int8   `json:"status"`       // 角色状态
 	DelFlag     int8   `json:"del_flag"`     // 删除状态
 	CreateBy    string `json:"create_by"`    // 角色创建人
-	CreateAt    string `json:"create_at"`    // 角色创建时间
+	CreateAt    int64 `json:"create_at"`    // 角色创建时间
 	UpdateBy    string `json:"update_by"`    // 角色更新人
-	UpdateAt    string `json:"update_at"`    // 角色更新时间
+	UpdateAt    int64 `json:"update_at"`    // 角色更新时间
 }
 
 // CreateRole 创建角色
