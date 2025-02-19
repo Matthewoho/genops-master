@@ -1,0 +1,98 @@
+// 定义协议版本
+syntax = "v1"
+
+// Role 角色
+type Role {
+	ID          int64  `json:"id"`          // 角色ID
+	RoleCode    string `json:"role_code"`    // 角色唯一编码，例如 "admin"
+	RoleName    string `json:"role_name"`    // 角色名称，例如 "管理员"
+	Description string `json:"description"`  // 角色的描述信息
+	Status      int8   `json:"status"`       // 角色状态
+	DelFlag     int8   `json:"del_flag"`     // 删除状态
+	CreateBy    string `json:"create_by"`    // 角色创建人
+	CreateAt    string `json:"create_at"`    // 角色创建时间
+	UpdateBy    string `json:"update_by"`    // 角色更新人
+	UpdateAt    string `json:"update_at"`    // 角色更新时间
+}
+
+// CreateRole 创建角色
+type (
+	CreateRoleReq {
+		RoleCode    string `json:"role_code"`    // 角色唯一编码，例如 "admin"
+		RoleName    string `json:"role_name"`    // 角色名称，例如 "管理员"
+		Description string `json:"description"`  // 角色的描述信息
+	}
+
+	CreateRoleRespData {
+		Role Role `json:"role"`
+	}
+)
+
+// DeleteRole 删除角色
+type (
+	DeleteRoleReq {
+		ID int64 `json:"id"`
+	}
+
+	DeleteRoleRespData {}
+)
+
+// ListRoles 角色列表
+type (
+	ListRolesReq {
+		Page     int64  `json:"page"`
+		PageSize int64  `json:"page_size"`
+		Sort     string `json:"sort"`
+	}
+
+	ListRolesRespData {
+		Total int64  `json:"total"`
+		Roles []Role `json:"roles"`
+	}
+)
+
+// GetRole 获取角色
+type (
+	GetRoleReq {
+		ID int64 `json:"id"`
+	}
+
+	GetRoleRespData {
+		Role Role `json:"role"`
+	}
+)
+
+// AssignRole 分配角色
+type (
+	AssignRoleReq {
+		UserID int64   `json:"user_id"`
+		RoleIDs []int64 `json:"role_ids"`
+	}
+
+	AssignRoleRespData {}
+)
+
+// DetachRole 移除角色
+type (
+	DetachRoleReq {
+		UserID int64   `json:"user_id"`
+		RoleIDs []int64 `json:"role_ids"`
+	}
+
+	DetachRoleRespData {}
+)
+
+// UpdateRole 更新角色
+type (
+	UpdateRoleReq {
+		ID          int    `json:"id"`          // 角色ID
+		RoleCode    string `json:"role_code"`   // 角色编码
+		RoleName    string `json:"role_name"`   // 角色名称
+		Description string `json:"description"` // 角色描述
+		Status      int8   `json:"status"`      // 角色状态
+	}
+
+	UpdateRoleRespData {
+		Role Role `json:"role"`
+	}
+)

@@ -1,0 +1,206 @@
+// 定义协议版本
+syntax = "v1"
+
+// 定义服务信息
+info (
+	title:   "Master API"
+	desc:    "运维系统的主服务，提供用户操作界面、用户管理、服务功能入口和RBAC鉴权功能"
+	author:  "Matthew"
+	date:    "2025-02-07"
+	version: "1.0.0"
+)
+
+// 全局中间件，用于JWT鉴权
+// middleware(
+//     AuthMiddleware
+//     RbacMiddleware
+// )
+//引入通用数据结构
+import "./types/biz.api"
+
+// 账户会话相关
+@server (
+	group:   "accounts"
+	prefix:  "/api/v1/accounts"
+	timeout: 5s
+)
+service master {
+	@handler Register
+	post /register (RegisterReq) returns (Result)
+
+	@handler Login
+	post /login (LoginReq) returns (Result)
+}
+
+@server (
+	group:      "accounts"
+	prefix:     "/api/v1/accounts"
+	jwt:        Auth
+	middleware: AuthMiddleware
+	timeout:    5s
+)
+service master {
+	@handler Logout
+	post /logout (LogoutReq) returns (Result)
+
+	@handler RefreshToken
+	post /refresh (RefreshTokenReq) returns (Result)
+
+	@handler GetUserInfo
+	get /info (GetUserInfoReq) returns (Result)
+
+	@handler UpdateUserInfo
+	put /update (UpdateUserInfoReq) returns (Result)
+
+	@handler UpdatePassword
+	put /update/password (UpdatePasswordReq) returns (Result)
+}
+
+import "./types/accounts.api"
+
+// Oauth2相关
+@server (
+	group:  "Oauth2"
+	prefix: "/api/v1/oauth2"
+)
+service master {
+	@handler Token
+	post /token (TokenReq) returns (Result)
+
+	@handler DingTalkLogin
+	post /dingtalk/login (DingTalkLoginReq) returns (Result)
+}
+
+import "./types/oauth2.api"
+
+// users相关
+@server (
+	group:      "users"
+	prefix:     "/api/v1/users"
+	jwt:        Auth
+	middleware: AuthMiddleware,RbacMiddleware
+)
+service master {
+	@handler ListUsers
+	get /list (ListUsersReq) returns (Result)
+
+	@handler GetUser
+	get /get (GetUserReq) returns (Result)
+
+	@handler CreateUser
+	post /create (CreateUserReq) returns (Result)
+
+	@handler DeleteUser
+	delete /delete (DeleteUserReq) returns (Result)
+
+	@handler UpdateUser
+	put /update (UpdateUserReq) returns (Result)
+
+	@handler UpdateUserStatus
+	put /update/status (UpdateUserStatusReq) returns (Result)
+
+	@handler SearchUsers
+	get /search (SearchUsersReq) returns (Result)
+
+	@handler ResetPassword
+	put /reset/password (ResetPasswordReq) returns (Result)
+}
+
+import "./types/users.api"
+
+// permissions相关
+@server (
+	group:      "permissions"
+	prefix:     "/api/v1/permissions"
+	jwt:        Auth
+	middleware: AuthMiddleware,RbacMiddleware
+)
+service master {
+	@handler CreatePermission
+	post /create (CreatePermissionReq) returns (Result)
+
+	@handler DeletePermission
+	delete /delete (DeletePermissionReq) returns (Result)
+
+	@handler ListPermissions
+	get /list (ListPermissionsReq) returns (Result)
+
+	@handler GetPermission
+	get /get (GetPermissionReq) returns (Result)
+
+	@handler AssignPermission
+	put /assign (AssignPermissionReq) returns (Result)
+
+	@handler DetachPermission
+	put /detach (DetachPermissionReq) returns (Result)
+
+	@handler UpdatePermission
+	put /update (UpdatePermissionReq) returns (Result)
+
+	@handler CheckPermission
+	get /check (CheckPermissionReq) returns (Result)
+}
+
+import "./types/permissions.api"
+
+// roles相关
+@server (
+	group:      "roles"
+	prefix:     "/api/v1/roles"
+	jwt:        Auth
+	middleware: AuthMiddleware,RbacMiddleware
+)
+service master {
+	@handler CreateRole
+	post /create (CreateRoleReq) returns (Result)
+
+	@handler DeleteRole
+	delete /delete (DeleteRoleReq) returns (Result)
+
+	@handler ListRoles
+	get /list (ListRolesReq) returns (Result)
+
+	@handler GetRole
+	get /get (GetRoleReq) returns (Result)
+
+	@handler AssignRole
+	put /assign (AssignRoleReq) returns (Result)
+
+	@handler DetachRole
+	put /detach (DetachRoleReq) returns (Result)
+
+	@handler UpdateRole
+	put /update (UpdateRoleReq) returns (Result)
+}
+
+import "./types/roles.api"
+
+// services相关
+@server (
+	group:      "services"
+	prefix:     "/api/v1/services"
+	jwt:        Auth
+	middleware: AuthMiddleware,RbacMiddleware
+)
+service master {}
+
+import "./types/services.api"
+
+// utils相关
+@server (
+	group:   "utils"
+	prefix:  "/api/v1/utils"
+	timeout: 5s
+)
+service master {
+	@handler GetCaptcha
+	get /captcha (GetCaptchaReq) returns (Result)
+
+	@handler Health
+	get /health (HealthReq) returns (Result)
+
+	@handler SysStatus
+	get /status (SysStatusReq) returns (Result)
+}
+
+import "./types/utils.api"

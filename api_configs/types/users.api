@@ -1,0 +1,122 @@
+// 定义协议版本
+syntax = "v1"
+
+// 统一User结构
+type User {
+    ID         int    `json:"id"`         // 用户ID
+    Username   string `json:"username"`   // 用户名
+    Realname   string `json:"realname"`   // 真实姓名
+    //Password   string `json:"password"`   // 密码
+    //Salt       string `json:"salt"`       // 密码盐
+    Email      string `json:"email"`      // 邮箱
+    Phone      string `json:"phone"`      // 电话
+    RoleCode   string `json:"role_code"`  // 角色编码
+    RoleName   string `json:"role_name"`  // 角色名称
+    Status     int8   `json:"status"`     // 状态
+    DelFlag    int8   `json:"del_flag"`   // 删除标志
+    Remark     string `json:"remark"`     // 备注
+    CreateBy   string `json:"create_by"`  // 创建人
+    CreateAt   string `json:"create_at"`// 创建时间
+    UpdateBy   string `json:"update_by"`  // 更新人
+    UpdateAt   string `json:"update_at"`// 更新时间
+    ClientIP   string `json:"client_ip"`  // 客户端IP
+    FailedCnt  int64  `json:"failed_cnt"` // 登录失败次数
+    Nickname   string `json:"nickname"`   // 昵称
+    Department string `json:"department"` // 部门
+    EnName     string `json:"en_name"`    // 英文名
+    Avatar     string `json:"avatar"`     // 头像
+    IsAdmin    bool   `json:"is_admin"`   // 是否为管理员
+}
+
+// ListUsers 请求
+type (
+    ListUsersReq  {
+        Page        int    `json:"page"`            // 当前页
+        PageSize    int    `json:"page_size"`       // 每页大小
+        Sort        string `json:"sort"`            // 排序字段
+    }
+    ListUsersRespData  {
+        Total int    `json:"total"` // 总用户数
+        Users []User `json:"users"` // 用户列表
+    }
+)
+
+// GetUser 请求
+type (
+    GetUserReq  {
+        UserName    string `json:"user_name"`    // 用户名
+    }
+    GetUserRespData  {
+        User User `json:"user"` // 返回的用户信息
+    }
+)
+
+// CreateUser 请求
+type (
+    CreateUserReq  {
+        Username    string `json:"username"`    // 用户名
+        Password    string `json:"password"`    // 密码
+        Realname    string `json:"realname"`    // 真实姓名
+        Email       string `json:"email"`       // 邮箱
+        Phone       string `json:"phone"`       // 电话
+        Department  string `json:"department"`  // 部门
+    }
+    CreateUserRespData  {
+        User User `json:"user"` // 返回的用户信息
+    }
+)
+
+// DeleteUser 请求
+type (
+    DeleteUserReq  {
+        UserName    string `json:"user_name"`    // 用户名
+    }
+    DeleteUserRespData  {
+        User User `json:"user"` // 返回的用户信息
+    }
+)
+
+// UpdateUser 请求
+type (
+    UpdateUserReq  {
+        User        User   `json:"user"`        // 用户信息
+    }
+    UpdateUserRespData  {
+        User User `json:"user"` // 返回的用户信息
+    }
+)
+
+// UpdateUserStatus 请求
+type (
+    UpdateUserStatusReq  {
+        UserName    string `json:"user_name"`    // 用户名
+        Status      int8   `json:"status"`       // 状态
+    }
+    UpdateUserStatusRespData  {
+        User User `json:"user"` // 返回的用户信息
+    }
+)
+
+// SearchUsers 请求
+type (
+    SearchUsersReq  {
+        Query      string `json:"query"`       // 搜索关键词
+        Page       int    `json:"page"`        // 页码
+        PageSize   int    `json:"page_size"`   // 每页数量
+    }
+    SearchUsersRespData  {
+        Total int    `json:"total"` // 总用户数
+        Users []User `json:"users"` // 用户列表
+    }
+)
+
+// ResetPassword 请求
+type (
+    ResetPasswordReq  {
+        UserName        string `json:"user_name"`        // 用户名
+        Password        string `json:"password"`         // 新密码
+        ConfirmPassword string `json:"confirm_password"` // 确认密码
+    }
+    ResetPasswordRespData  {
+    }
+)

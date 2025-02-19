@@ -1,0 +1,9 @@
+// 定义协议版本
+syntax = "v1"
+
+// 统一响应数据结构
+type Result {
+    Code    int16  `json:"code"`    // 响应码
+    Message string `json:"message"` // 响应消息
+    Data    interface{}   `json:"data"`    // 返回数据，可以是任何类型 //any
+}

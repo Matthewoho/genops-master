@@ -1,0 +1,95 @@
+// 定义协议版本
+syntax = "v1"
+
+// 统一用户信息
+type UserInfo {
+    ID         int64  `json:"id"`          // 用户ID
+    Username   string `json:"username"`    // 用户名
+    Realname   string `json:"realname"`    // 真实姓名
+    Email      string `json:"email"`       // 邮箱
+    Phone      string `json:"phone"`       // 电话号码
+    Remark     string `json:"remark,omitempty"`   // 备注
+    Nickname   string `json:"nickname,omitempty"` // 昵称
+    Department string `json:"department,omitempty"` // 部门
+    EnName     string `json:"en_name,omitempty"`    // 英文名
+    Avatar     string `json:"avatar,omitempty"`     // 头像
+}
+
+// Register 注册结构体
+type (
+    RegisterReq {
+        Username     string `json:"username"`      // 用户名
+        Password     string `json:"password"`      // 密码
+        Email        string `json:"email"`         // 邮箱
+        Phone        string `json:"phone"`         // 电话号码
+        CaptchaId    string `json:"captcha_id"`    // 验证码ID
+        CaptchaValue string `json:"captcha_value"` // 验证码值
+    }
+    RegisterRespData {}
+)
+
+// Login 登录结构体
+type (
+    LoginReq {
+        Username     string `json:"username"`      // 用户名
+        Password     string `json:"password"`      // 密码
+        CaptchaId    string `json:"captcha_id"`    // 验证码ID
+        CaptchaValue string `json:"captcha_value"` // 验证码值
+    }
+    LoginRespData {
+        Tokens  SessionToken `json:"tokens"`  // 会话令牌
+        UserInfo UserInfo    `json:"userinfo"` // 用户信息
+    }
+)
+
+// Logout 注销结构体
+type (
+    LogoutReq {
+        Username    string `json:"username"`    // 用户名
+        RefreshToken string `json:"refresh_token"` // 刷新令牌
+    } 
+    LogoutRespData {} 
+)
+
+// RefreshToken 刷新token结构体
+type (
+    RefreshTokenReq {
+        Username     string `json:"username"`     // 用户名
+        RefreshToken string `json:"refresh_token"` // 刷新令牌
+    }
+    RefreshTokenRespData {
+        Tokens SessionToken `json:"tokens"` // 会话令牌
+    }
+)
+
+// GetUserInfo 获取用户信息结构体
+type (
+    GetUserInfoReq {
+        Username    string `json:"username"`    // 用户名
+    }
+    GetUserInfoRespData {
+        UserInfo UserInfo `json:"userinfo"` // 用户信息
+    }
+)
+
+// UpdateUserInfo 更新用户信息结构体
+type (
+    UpdateUserInfoReq {
+        Username    string   `json:"username"`     // 用户名
+        UserInfo    UserInfo `json:"userinfo"`     // 用户信息
+    }
+    UpdateUserInfoRespData {
+        UserInfo UserInfo `json:"userinfo"` // 用户信息
+    }
+)
+
+// UpdatePassword 更新密码结构体
+type (
+    UpdatePasswordReq {
+        Username       string `json:"username"`        // 用户名
+        OldPassword    string `json:"old_password"`    // 旧密码
+        NewPassword    string `json:"new_password"`    // 新密码
+        ConfirmPassword string `json:"confirm_password"` // 确认密码
+    }
+    UpdatePasswordRespData {}
+)

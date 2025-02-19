@@ -1,0 +1,9 @@
+Name: master
+Host: 0.0.0.0
+Port: 8888
+Auth:
+  AccessSecret: "12345678"
+  AccessExpire: 3600
+Redis:
+  Addr: 192.168.110.46:6379
+  Password: ""

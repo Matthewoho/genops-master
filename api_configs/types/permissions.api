@@ -1,0 +1,99 @@
+// 定义协议版本
+syntax = "v1"
+
+// Permissions 权限
+type Permission  {
+    ID          int64  `json:"id"`          // 权限ID
+    Name        string `json:"name"`        // 权限名称
+    Description string `json:"description"` // 权限描述
+    CreatedAt   string `json:"created_at"`  // 创建时间
+    CreateBy    string `json:"create_by"`    // 角色创建人
+    UpdatedAt   string `json:"updated_at"`  // 更新时间
+    UpdateBy    string `json:"update_by"`    // 角色更新人
+}
+
+// CreatePermission 创建权限
+type (
+    CreatePermissionReq  {
+        Name        string `json:"name"`        // 权限名称
+        Description string `json:"description"` // 权限描述
+    }
+    CreatePermissionRespData  {
+        ID int64 `json:"id"` // 新权限ID
+    }
+)
+
+// DeletePermission 删除权限
+type (
+    DeletePermissionReq  {
+        ID int64 `json:"id"` // 权限ID
+    }
+    DeletePermissionRespData  {
+    }
+)
+
+// ListPermissions 列出权限
+type (
+    ListPermissionsReq  {
+        Page     int    `json:"page"`      // 页码
+        PageSize int    `json:"page_size"` // 每页数量
+        Sort     string `json:"sort"`      // 排序方式（如：asc/desc）
+    }
+    ListPermissionsRespData  {
+        Total       int64        `json:"total"`        // 总数
+        Permissions []Permission `json:"permissions"`  // 权限列表
+    }
+)
+
+// GetPermission 获取权限
+type (
+    GetPermissionReq  {
+        ID int64 `json:"id"` // 权限ID
+    }
+    GetPermissionRespData  {
+        Permission Permission `json:"permission"` // 权限数据
+    }
+)
+
+// AssignPermission 分配权限
+type (
+    AssignPermissionReq  {
+        RoleID       int64   `json:"role_id"`       // 角色ID
+        PermissionIDs []int64 `json:"permission_ids"` // 权限ID列表
+    }
+    AssignPermissionRespData  {
+    }
+)
+
+// DetachPermission 移除权限
+type (
+    DetachPermissionReq  {
+        RoleID       int64   `json:"role_id"`       // 角色ID
+        PermissionIDs []int64 `json:"permission_ids"` // 权限ID列表
+    }
+    DetachPermissionRespData  {
+    }
+)
+
+// UpdatePermission 更新权限
+type (
+    UpdatePermissionReq  {
+        ID          int64  `json:"id"`          // 权限ID
+        Name        string `json:"name"`        // 权限名称
+        Description string `json:"description"` // 权限描述
+    }
+    UpdatePermissionRespData  {
+        Permission Permission `json:"permission"` // 更新后的权限数据
+    }
+)
+
+// CheckPermission 检查权限
+type (
+    CheckPermissionReq  {
+        RoleID      int64 `json:"role_id"`      // 角色ID
+        PermissionID int64 `json:"permission_id"` // 权限ID
+    }
+    CheckPermissionRespData  {
+        HasPermission bool `json:"has_permission"` // 是否拥有权限
+    }
+)
