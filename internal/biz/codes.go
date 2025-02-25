@@ -9,4 +9,6 @@ var (
 	InvalidUser          = NewError(10300, "用户名或密码错误")
 	GenerateCaptchaError = NewError(10400, "获取验证码错误")
 	InvalidCaptcha       = NewError(10500, "验证码错误")
+	RegisterError        = NewError(10600, "注册失败")
+	GenerateTokenError   = NewError(10700, "生成token错误")
 )

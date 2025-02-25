@@ -3,9 +3,11 @@ package accounts
 import (
 	"net/http"
 
+	"genops-master/internal/biz"
 	"genops-master/internal/logic/accounts"
 	"genops-master/internal/svc"
 	"genops-master/internal/types"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
@@ -20,9 +22,9 @@ func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := accounts.NewRegisterLogic(r.Context(), svcCtx)
 		resp, err := l.Register(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(r.Context(), w, biz.RegisterError)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(r.Context(), w, biz.Success(resp))
 		}
 	}
 }

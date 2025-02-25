@@ -23,7 +23,7 @@ func NewGetUserInfoLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 	}
 }
 
-func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (resp *types.Result, err error) {
+func (l *GetUserInfoLogic) GetUserInfo(req *types.GetUserInfoReq) (resp interface{}, err error) {
 	// todo: add your logic here and delete this line
 
 	return

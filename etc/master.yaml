@@ -1,9 +1,16 @@
-Name: master
-Host: 0.0.0.0
-Port: 8888
+Name: master                      # 集群名称
+Host: 0.0.0.0                     # 监听地址
+Port: 8888                        # 监听端口
 Auth:
-  AccessSecret: "12345678"
-  AccessExpire: 3600
+  AccessSecret: "damn"            # 访问密钥，可为空
+  RefreshSecret: "it"            # 刷新密钥，可为空
+Mysql:
+  Addr: root:000000@tcp(192.168.110.46:3306)/test?charset=utf8mb4&parseTime=True&loc=Local
+ 
+
 Redis:
-  Addr: 192.168.110.46:6379
-  Password: ""
+  Addr: 192.168.110.46:6379       # Redis地址
+  Password: ""                    # Redis密码
+Consul:
+  Addr: 192.168.110.46:8500        # Consul地址
+  Token: ""                        # Consul Token

@@ -40,8 +40,8 @@ type (
 		ID                   int64          `db:"ID"`
 		USERNAME             string         `db:"USERNAME"`
 		REALNAME             sql.NullString `db:"REALNAME"`
-		PASSWORD             string         `db:"PASSWORD"`
-		SALT                 sql.NullString `db:"SALT"`
+		PASSWORD             string         `db:"PASSWORD"` // 密码
+		SALT                 sql.NullString `db:"SALT"`     // 盐
 		EMAIL                sql.NullString `db:"EMAIL"`
 		PHONE                sql.NullString `db:"PHONE"`
 		ROLECODE             sql.NullString `db:"ROLE_CODE"`
