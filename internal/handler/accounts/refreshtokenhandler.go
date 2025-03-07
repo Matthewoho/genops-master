@@ -6,6 +6,7 @@ import (
 	"genops-master/internal/logic/accounts"
 	"genops-master/internal/svc"
 	"genops-master/internal/types"
+
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
@@ -20,7 +21,7 @@ func RefreshTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := accounts.NewRefreshTokenLogic(r.Context(), svcCtx)
 		resp, err := l.RefreshToken(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.OkJsonCtx(r.Context(), w, err)
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, resp)
 		}

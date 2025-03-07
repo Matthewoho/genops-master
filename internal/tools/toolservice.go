@@ -1,4 +1,4 @@
-package svc
+package tools
 
 import (
 	"bytes"
@@ -52,6 +52,13 @@ func HashPasswordWithSalt(password, salt string) (string, error) {
 	return string(hash), nil
 }
 
+// 校验哈希密码（使用盐）
+func CheckPassword(hash, password, salt string) bool {
+	saltedPassword := password + salt
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(saltedPassword))
+	return err == nil
+}
+
 // GenerateCaptcha 生成图形验证码
 func GenerateCaptcha(redisClient *redis.Client) (*Captcha, error) {
 	// 生成验证码ID
@@ -93,33 +100,49 @@ func GenerateCaptcha(redisClient *redis.Client) (*Captcha, error) {
 }
 
 // Verify 验证图形验证码
-func (c *Captcha) Verify(redisClient *redis.Client, captchaID, captchaValue string) (bool, error) {
+func (c *Captcha) Verify(redisClient *redis.Client, captchaID, captchaValue string) error {
+	// 添加前缀
+	redisKey := "captcha." + captchaID
+
 	// 从 Redis 中获取存储的验证码
-	storedValue, err := redisClient.Get(redisClient.Context(), captchaID).Result()
+	storedValue, err := redisClient.Get(redisClient.Context(), redisKey).Result()
 	if err != nil {
 		if err == redis.Nil {
-			return false, nil // 验证码不存在
+			return fmt.Errorf("captcha not found: %w", err)
 		}
-		return false, fmt.Errorf("error getting captcha from Redis: %w", err)
+		return fmt.Errorf("error getting captcha from Redis: %w", err)
+	}
+
+	// 删除 Redis 中的验证码
+	if err := redisClient.Del(redisClient.Context(), redisKey).Err(); err != nil {
+		return fmt.Errorf("error deleting captcha from Redis: %w", err)
 	}
 
 	// 比较用户输入的验证码值与存储的验证码值
-	return storedValue == captchaValue, nil
+	if storedValue != captchaValue {
+		return fmt.Errorf("invalid captcha")
+	}
+
+	return nil
 }
 
 // storeCaptchaInRedis 存储验证码到 Redis
 func StoreCaptchaInRedis(redisClient *redis.Client, captchaID, captchaValue string, expireAt time.Time) error {
 	// 计算验证码过期时长
 	duration := time.Until(expireAt)
+
+	// 添加前缀
+	redisKey := "captcha." + captchaID
+
 	// 将验证码ID、值和过期时间存储到 Redis
-	if err := redisClient.Set(redisClient.Context(), captchaID, captchaValue, duration).Err(); err != nil {
+	if err := redisClient.Set(redisClient.Context(), redisKey, captchaValue, duration).Err(); err != nil {
 		return fmt.Errorf("could not store captcha in redis: %w", err)
 	}
 	return nil
 }
 
 // 创建token
-func GenerateTokens(ctx *ServiceContext, username string) (*Tokens, error) {
+func GenerateTokens(username string, AccessSecuretKeyString string, RefreshSecuretKeyString string) (*Tokens, error) {
 	accessClaims := &Claims{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -139,14 +162,14 @@ func GenerateTokens(ctx *ServiceContext, username string) (*Tokens, error) {
 	}
 
 	// 生成 Access Token
-	secretKey := []byte(ctx.Config.Auth.AccessSecret)
+	secretKey := []byte(AccessSecuretKeyString)
 	accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString(secretKey)
 	if err != nil {
 		return nil, err
 	}
 
 	// 生成 Refresh Token
-	refreshSecretKey := []byte(ctx.Config.Auth.RefreshSecret)
+	refreshSecretKey := []byte(RefreshSecuretKeyString)
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString(refreshSecretKey)
 	if err != nil {
 		return nil, err
@@ -168,33 +191,16 @@ func GenerateTokens(ctx *ServiceContext, username string) (*Tokens, error) {
 	return tokens, nil
 }
 
-// 解析token
-func ParseToken(tokenString string, secretKey string) (*Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	claims, ok := token.Claims.(*Claims)
-	if !ok || !token.Valid {
-		return nil, fmt.Errorf("invalid token")
-	}
-
-	return claims, nil
-}
-
 // 刷新token
-func RefreshAccessToken(ctx *ServiceContext, refreshToken string) (*Tokens, error) {
+func RefreshAccessToken(AccessSecuretKeyString string, refreshTokenSecuretKeyString string, refreshToken string) (*Tokens, error) {
 	// 解析 Refresh Token
-	claims, err := ParseToken(refreshToken, ctx.Config.Auth.RefreshSecret)
+	claims, err := ParseToken(refreshToken, refreshTokenSecuretKeyString)
 	if err != nil {
 		return nil, fmt.Errorf("refresh token 无效或已过期: %w", err)
 	}
 
 	// 重新生成 Access Token
-	return GenerateTokens(ctx, claims.Username)
+	return GenerateTokens(claims.Username, AccessSecuretKeyString, refreshTokenSecuretKeyString)
 }
 
 // 撤销token（存储黑名单）
@@ -204,4 +210,41 @@ func RevokeToken(redisClient *redis.Client, token string, expireDuration time.Du
 		return fmt.Errorf("failed to revoke token: %w", err)
 	}
 	return nil
+}
+
+// 存储token到Redis
+func StoreTokenInRedis(redisClient *redis.Client, accesstoken string, refreshtoken string, username string) error {
+	// 添加前缀
+	accesstoken = "access." + accesstoken
+	refreshtoken = "refresh." + refreshtoken
+	err := redisClient.Set(redisClient.Context(), accesstoken, username, accessTokenExpireDuration).Err()
+	if err != nil {
+		return fmt.Errorf("failed to store access token in Redis: %w", err)
+	}
+	err = redisClient.Set(redisClient.Context(), refreshtoken, username, refreshTokenExpireDuration).Err()
+	if err != nil {
+		return fmt.Errorf("failed to store refresh token in Redis: %w", err)
+	}
+	return nil
+}
+
+// 解析校验token
+func ParseToken(tokenString string, secretKey string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse token: %w", err)
+	}
+
+	claims, ok := token.Claims.(*Claims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+
+	if !token.Valid {
+		return nil, fmt.Errorf("invalid or expired token")
+	}
+
+	return claims, nil
 }

@@ -5,6 +5,7 @@ import (
 
 	biz "genops-master/internal/biz"
 	"genops-master/internal/svc"
+	"genops-master/internal/tools"
 	"genops-master/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -28,7 +29,7 @@ func (l *GetCaptchaLogic) GetCaptcha(ctx *svc.ServiceContext, req *types.GetCapt
 	// todo: add your logic here and delete this line
 
 	// 1. 生成验证码
-	captcha, err := svc.GenerateCaptcha(ctx.RedisClient)
+	captcha, err := tools.GenerateCaptcha(ctx.RedisClient)
 	if err != nil {
 		return nil, biz.GenerateCaptchaError
 	}

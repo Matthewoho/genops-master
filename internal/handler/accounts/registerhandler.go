@@ -1,6 +1,7 @@
 package accounts
 
 import (
+	"fmt"
 	"net/http"
 
 	"genops-master/internal/biz"
@@ -16,13 +17,14 @@ func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		var req types.RegisterReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
+			fmt.Println(err)
 			return
 		}
 
 		l := accounts.NewRegisterLogic(r.Context(), svcCtx)
 		resp, err := l.Register(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, biz.RegisterError)
+			httpx.OkJsonCtx(r.Context(), w, err)
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, biz.Success(resp))
 		}

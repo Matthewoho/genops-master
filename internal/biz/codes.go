@@ -11,4 +11,5 @@ var (
 	InvalidCaptcha       = NewError(10500, "验证码错误")
 	RegisterError        = NewError(10600, "注册失败")
 	GenerateTokenError   = NewError(10700, "生成token错误")
+	RedisError           = NewError(10800, "Redis错误")
 )

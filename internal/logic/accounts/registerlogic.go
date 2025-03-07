@@ -6,6 +6,7 @@ import (
 	"genops-master/internal/biz"
 	"genops-master/internal/models"
 	"genops-master/internal/svc"
+	"genops-master/internal/tools"
 	"genops-master/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -27,6 +28,18 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp bool, err error) {
 	// todo: add your logic here and delete this line
+
+	// 0. 校验验证码
+	captcha := tools.Captcha{
+		Captcha: types.Captcha{
+			CaptchaID:    req.CaptchaId,
+			CaptchaValue: req.CaptchaValue,
+		},
+	}
+	err = captcha.Verify(l.svcCtx.RedisClient, captcha.CaptchaID, captcha.CaptchaValue)
+	if err != nil {
+		return false, biz.InvalidCaptcha // 验证码错误
+	}
 
 	// 1. 初始化用户模型
 	userModel := svc.NewUserService(l.svcCtx.MySQLClient)

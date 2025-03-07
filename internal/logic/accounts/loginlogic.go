@@ -5,6 +5,7 @@ import (
 
 	"genops-master/internal/biz"
 	"genops-master/internal/svc"
+	"genops-master/internal/tools"
 	"genops-master/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -26,6 +27,18 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp interface{}, err error) {
 	// todo: add your logic here and delete this line
+
+	// 0. 校验验证码
+	captcha := tools.Captcha{
+		Captcha: types.Captcha{
+			CaptchaID:    req.CaptchaId,
+			CaptchaValue: req.CaptchaValue,
+		},
+	}
+	err = captcha.Verify(l.svcCtx.RedisClient, captcha.CaptchaID, captcha.CaptchaValue)
+	if err != nil {
+		return nil, biz.InvalidCaptcha // 验证码错误
+	}
 
 	// 1. 初始化用户模型
 	userModel := svc.NewUserService(l.svcCtx.MySQLClient)
@@ -49,9 +62,15 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp interface{}, err error) {
 	}
 
 	// 4. 生成token
-	tokens, err := svc.GenerateTokens(l.svcCtx, req.Username)
+	tokens, err := tools.GenerateTokens(req.Username, l.svcCtx.Config.Auth.AccessSecret, l.svcCtx.Config.Auth.RefreshSecret)
 	if err != nil {
 		return nil, biz.GenerateTokenError // 生成token错误
+	}
+
+	// 4.1 存储token到Redis
+	err = tools.StoreTokenInRedis(l.svcCtx.RedisClient, tokens.AccessToken, tokens.RefreshToken, req.Username)
+	if err != nil {
+		return nil, biz.RedisError // Redis存储错误
 	}
 
 	// 5. 获取用户信息

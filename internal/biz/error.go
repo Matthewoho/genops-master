@@ -2,13 +2,13 @@ package biz
 
 type Error struct {
 	Code    int64  `json:"code"`
-	Message string `json:"msg"`
+	Message string `json:"message"`
 }
 
-func NewError(code int64, msg string) *Error {
+func NewError(code int64, message string) *Error {
 	return &Error{
 		Code:    code,
-		Message: msg,
+		Message: message,
 	}
 }
 

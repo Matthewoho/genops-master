@@ -43,7 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 
 	return &ServiceContext{
 		Config:          c,
-		AuthMiddleware:  middleware.NewAuthMiddleware().Handle,
+		AuthMiddleware:  middleware.NewAuthMiddleware(rdb).Handle,
 		RbacMiddleware:  middleware.NewRbacMiddleware().Handle,
 		RedisClient:     rdb,
 		MySQLClient:     mysqlClient,

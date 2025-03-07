@@ -3,7 +3,9 @@ package svc
 import (
 	"context" // 导入 context 包
 	"database/sql"
+	"fmt"
 	"genops-master/internal/models"
+	"genops-master/internal/tools"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -45,13 +47,13 @@ func (s *UserService) ExistsUser(ctx context.Context, username string) (bool, er
 // 创建用户
 func (s *UserService) CreateUser(ctx context.Context, user *models.USERS) error {
 	// 生成盐
-	salt, err := GenerateSalt()
+	salt, err := tools.GenerateSalt()
 	if err != nil {
 		return err
 	}
 
 	// 生成哈希密码
-	hashedPassword, err := HashPasswordWithSalt(user.PASSWORD, salt)
+	hashedPassword, err := tools.HashPasswordWithSalt(user.PASSWORD, salt)
 	if err != nil {
 		return err
 	}
@@ -69,17 +71,22 @@ func (s *UserService) CreateUser(ctx context.Context, user *models.USERS) error 
 func (s *UserService) VerifyPassword(ctx context.Context, username, password string) (bool, error) {
 	user, err := s.userModel.FindOneByUSERNAME(ctx, username)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error finding user: %w", err) // 处理可能的错误情况
 	}
 	if !user.SALT.Valid {
-		return false, sql.ErrNoRows
+		return false, fmt.Errorf("user salt is not valid") // 处理可能的错误情况
 	}
-	hashedPassword, err := HashPasswordWithSalt(password, user.SALT.String)
+	hashedPassword, err := tools.HashPasswordWithSalt(password, user.SALT.String)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error hashing password: %w", err) // 处理可能的错误情况
 	}
 
-	return hashedPassword == user.PASSWORD, nil
+	// 比较哈希密码是否匹配
+	if tools.CheckPassword(hashedPassword, user.PASSWORD, user.SALT.String) {
+		return false, fmt.Errorf("密码不匹配")
+	}
+
+	return true, nil
 }
 
 // 获取用户信息

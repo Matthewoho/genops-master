@@ -2,8 +2,8 @@ Name: master                      # 集群名称
 Host: 0.0.0.0                     # 监听地址
 Port: 8888                        # 监听端口
 Auth:
-  AccessSecret: "damn"            # 访问密钥，可为空
-  RefreshSecret: "it"            # 刷新密钥，可为空
+  AccessSecret: "damndamn"            # 访问密钥，可为空
+  RefreshSecret: "damndamnit"            # 刷新密钥，可为空
 Mysql:
   Addr: root:000000@tcp(192.168.110.46:3306)/test?charset=utf8mb4&parseTime=True&loc=Local
  
